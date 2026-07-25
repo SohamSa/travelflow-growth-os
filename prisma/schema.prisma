@@ -1,0 +1,255 @@
+// TravelFlow Growth OS — local SQLite schema
+// Fictional demo data for Horizon Trails Travel (prototype only)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  QUOTE_SENT
+  BOOKED
+  LOST
+}
+
+enum TripType {
+  ROMANTIC
+  FAMILY
+  ADVENTURE
+  LUXURY
+  CULTURAL
+  BEACH
+  GROUP
+}
+
+enum MarketingSource {
+  GOOGLE_ADS
+  INSTAGRAM
+  FACEBOOK
+  ORGANIC_SEARCH
+  REFERRAL
+  EMAIL
+  DIRECT
+}
+
+enum ContactMethod {
+  EMAIL
+  PHONE
+  EITHER
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  EXPIRED
+  DECLINED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ActivityType {
+  NOTE
+  ACKNOWLEDGMENT
+  FOLLOW_UP
+  STAGE_CHANGE
+  QUOTE
+  BOOKING
+  PRIORITY_NOTIFICATION
+  OVERDUE_REMINDER
+  REVIEW_REQUEST
+  REENGAGEMENT
+  EMAIL_DRAFT
+  SYSTEM
+}
+
+enum CopilotDraftType {
+  INQUIRY_SUMMARY
+  NEXT_ACTION
+  INITIAL_RESPONSE
+  ITINERARY
+  QUOTE_FOLLOW_UP
+  REENGAGEMENT
+}
+
+enum AutomationRunStatus {
+  SUCCESS
+  SKIPPED
+  FAILED
+}
+
+model Customer {
+  id                    String         @id @default(cuid())
+  firstName             String
+  lastName              String
+  email                 String         @unique
+  phone                 String?
+  preferredContactMethod ContactMethod @default(EMAIL)
+  isReturning           Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  leads                 Lead[]
+}
+
+model Campaign {
+  id               String   @id @default(cuid())
+  name             String
+  channel          MarketingSource
+  destinationFocus String?
+  startDate        DateTime
+  endDate          DateTime
+  spend            Float    @default(0)
+  impressions      Int      @default(0)
+  clicks           Int      @default(0)
+  websiteSessions  Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  leads            Lead[]
+
+  @@index([channel])
+}
+
+model Lead {
+  id                 String          @id @default(cuid())
+  customerId         String
+  campaignId         String?
+  source             MarketingSource
+  destination        String
+  travelStartDate    DateTime?
+  travelEndDate      DateTime?
+  travelerCount      Int             @default(1)
+  estimatedBudget    Float?
+  tripType           TripType
+  interests          String          @default("[]")
+  specialRequests    String?
+  stage              LeadStage       @default(NEW)
+  score              Int             @default(0)
+  scoreExplanation   String          @default("[]")
+  assignedConsultant String
+  firstResponseAt    DateTime?
+  lostReason         String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  customer       Customer        @relation(fields: [customerId], references: [id])
+  campaign       Campaign?       @relation(fields: [campaignId], references: [id])
+  quotes         Quote[]
+  bookings       Booking[]
+  activities     Activity[]
+  tasks          Task[]
+  automationRuns AutomationRun[]
+  copilotDrafts  CopilotDraft[]
+
+  @@index([stage])
+  @@index([source])
+  @@index([createdAt])
+  @@index([destination])
+}
+
+model Quote {
+  id        String      @id @default(cuid())
+  leadId    String
+  amount    Float
+  status    QuoteStatus @default(DRAFT)
+  sentAt    DateTime?
+  expiresAt DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  lead      Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+}
+
+model Booking {
+  id               String    @id @default(cuid())
+  leadId           String
+  bookingReference String    @unique
+  revenue          Float
+  bookedAt         DateTime
+  tripCompletedAt  DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lead             Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([bookedAt])
+  @@index([leadId])
+}
+
+model Activity {
+  id          String       @id @default(cuid())
+  leadId      String
+  type        ActivityType
+  title       String
+  description String
+  channel     String?
+  isAutomated Boolean      @default(false)
+  occurredAt  DateTime     @default(now())
+  lead        Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([occurredAt])
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  leadId      String
+  title       String
+  dueAt       DateTime
+  completedAt DateTime?
+  priority    TaskPriority @default(MEDIUM)
+  assignedTo  String
+  createdAt   DateTime     @default(now())
+  lead        Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([dueAt])
+}
+
+model AutomationRule {
+  id        String          @id @default(cuid())
+  name      String
+  trigger   String
+  action    String
+  enabled   Boolean         @default(true)
+  runCount  Int             @default(0)
+  lastRunAt DateTime?
+  runs      AutomationRun[]
+}
+
+model AutomationRun {
+  id         String               @id @default(cuid())
+  ruleId     String
+  leadId     String?
+  status     AutomationRunStatus  @default(SUCCESS)
+  summary    String
+  executedAt DateTime             @default(now())
+  rule       AutomationRule       @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  lead       Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([ruleId])
+  @@index([leadId])
+  @@index([executedAt])
+}
+
+model CopilotDraft {
+  id        String           @id @default(cuid())
+  leadId    String
+  type      CopilotDraftType
+  content   String
+  provider  String
+  createdAt DateTime         @default(now())
+  lead      Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+}
