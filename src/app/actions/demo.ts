@@ -2,12 +2,26 @@
 
 import { execSync } from "node:child_process";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/db/prisma";
+import { prisma, reloadRuntimeDatabase } from "@/lib/db/prisma";
 
 export type DemoResetResult = { ok: boolean; message: string };
 
+function isHostedDemo() {
+  return process.env.VERCEL === "1" || process.env.TRAVELFLOW_USE_TMP_DB === "1";
+}
+
 export async function resetDemoData(): Promise<DemoResetResult> {
   try {
+    if (isHostedDemo()) {
+      await reloadRuntimeDatabase();
+      revalidatePath("/", "layout");
+      return {
+        ok: true,
+        message:
+          "Demo data restored to the original Horizon Trails Travel snapshot. Refresh any open pages to see the reset.",
+      };
+    }
+
     await prisma.$transaction([
       prisma.copilotDraft.deleteMany(),
       prisma.automationRun.deleteMany(),

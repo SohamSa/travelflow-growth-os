@@ -1,8 +1,21 @@
 # TravelFlow Growth OS
 
-**From marketing inquiry to booked journey** — a local prototype that shows travel businesses how to capture leads faster, connect campaigns to revenue, and support consultants with safe AI drafts.
+**From marketing inquiry to booked journey** — a prototype that shows travel businesses how to capture leads faster, connect campaigns to revenue, and support consultants with safe AI drafts.
 
-> **For business owners & stakeholders:** start with [How we solve the three problems](#how-we-solve-the-three-problems) and the [15–30 minute demo script](docs/DEMO_SCRIPT.md). Technical depth lives in [Architecture](docs/ARCHITECTURE.md).
+## Live demo (no setup required)
+
+### 👉 [Open the live app](https://travelflow-growth-os.vercel.app)
+
+Business owners and stakeholders can click that link and use the full product in the browser — **no terminal, no install, no technical steps**.
+
+| Useful starting points | Link |
+|------------------------|------|
+| Executive dashboard | https://travelflow-growth-os.vercel.app/dashboard |
+| Lead pipeline (search **Maya Patel**) | https://travelflow-growth-os.vercel.app/leads |
+| Guided demo walkthrough | https://travelflow-growth-os.vercel.app/demo |
+| Source code on GitHub | https://github.com/SohamSa/travelflow-growth-os |
+
+> **For business owners & stakeholders:** open the live app first, then use [How we solve the three problems](#how-we-solve-the-three-problems) and the [15–30 minute demo script](docs/DEMO_SCRIPT.md). Technical depth lives in [Architecture](docs/ARCHITECTURE.md).
 
 ---
 
@@ -22,19 +35,18 @@
 | **2. Marketing cannot be tied to bookings** | Teams see clicks and spend, not which channels produce quotes and revenue. | Dashboard + campaigns connect spend → inquiries → qualified leads → quotes → bookings → revenue (CPL, CPB, ROAS, funnel). |
 | **3. Customer communication is generic** | Consultants rewrite the same summaries, replies, and itineraries by hand. | AI Travel Copilot drafts inquiry summaries, next actions, replies, itineraries, and follow-ups — always labeled **Draft for employee review** (never auto-sent). |
 
-**Sample story used in demos:** Maya Patel — Instagram inquiry for a 7-day Italy anniversary trip (2 travelers, culture / local food / moderate luxury). Search for her in Leads after you run the app locally.
+**Sample story used in demos:** Maya Patel — Instagram inquiry for a 7-day Italy anniversary trip (2 travelers, culture / local food / moderate luxury). Search for her on the [Leads](https://travelflow-growth-os.vercel.app/leads) page.
 
-## Stakeholder reading path (no terminal required)
+## Stakeholder path (click the link — nothing to install)
 
-Anyone with this repository link can review the business approach without installing anything:
+1. **[Live app](https://travelflow-growth-os.vercel.app)** — click around the product  
+2. **This README** — problem framing and solution map  
+3. **[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)** — presentation script for a 15–30 minute walkthrough  
+4. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — high-level system design (plain language + diagrams)  
+5. **[docs/METRICS.md](docs/METRICS.md)** — how KPIs are calculated (so numbers stay trustworthy)  
+6. **[docs/INTERVIEW_QA.md](docs/INTERVIEW_QA.md)** — honest answers on scope, what’s simulated, and what a real engagement would change  
 
-1. **This README** — problem framing and solution map  
-2. **[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)** — presentation script for a 15–30 minute walkthrough  
-3. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — high-level system design (plain language + diagrams)  
-4. **[docs/METRICS.md](docs/METRICS.md)** — how KPIs are calculated (so numbers stay trustworthy)  
-5. **[docs/INTERVIEW_QA.md](docs/INTERVIEW_QA.md)** — honest answers on scope, what’s simulated, and what a real engagement would change  
-
-> **Note on “live demo”:** GitHub hosts the **project and documentation** (always available via link). The interactive app runs on your machine with `npm run dev`, or can be deployed later to free hosting if you want a clickable URL for non-technical viewers. SQLite + Server Actions are designed for a trustworthy local prototype first.
+> **Hosted demo note:** The live site is deployed for stakeholder demos. Some interactive changes may reset between visits because this is a shared prototype environment. Use **Demo Guide → Reset demo data** if you want to restore the original Maya Patel story.
 
 ## What this is
 

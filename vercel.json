@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm run build:vercel",
+  "installCommand": "npm install",
+  "build": {
+    "env": {
+      "DATABASE_URL": "file:./dev.db",
+      "AI_MODE": "demo",
+      "NEXT_PUBLIC_DEMO_MODE": "true"
+    }
+  }
+}
